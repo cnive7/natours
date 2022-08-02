@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = requrie('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -66,6 +67,16 @@ app.use(
   })
 );
 
+app.use(cors()); // Will add a couple of different headers to our response // Access-Control-Allow-Origin: *
+// app.use(
+//   cors({
+//     origin: 'https://www.natours.com',
+//   })
+// );
+
+app.options('*', cors()); //hyyp method. like app.get(), app.post(), app.patch()
+// app.options('/api/v1/tours/:id', cors());
+
 app.use(compression()); //compress all the text that's sent to clients
 
 //Serving static files (css, etc)
@@ -89,6 +100,7 @@ app.use((req, res, next) => {
 
 //whenever there's a request with a url that starts like this, then this middleware function will basically be called
 
+// app.use('/api/v1/tours', cors(), tourRouter);
 app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
