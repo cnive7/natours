@@ -98,7 +98,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   //this function is async, calls the callback function when verification completed. we'll promisify the function
   //jwt.verify(token, process.env.JWT_SECRET); //if this throws an error, we are handling that in the global error handling middleware errors: JsonWebTokenError, TokenExpiredError
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
+  // console.log(decoded);
   //check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
@@ -223,7 +223,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Something went wrong', 400));
   }
   //check if posted current password is correct
-  console.log(user);
+  // console.log(user);
   if (!(await user.correctPassword(passwordOld, user.password))) {
     return next(new AppError('Incorrect password'), 401);
   }

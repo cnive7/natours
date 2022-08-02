@@ -37,7 +37,6 @@ if (updateUserDataForm)
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]); //since it's only one file we select 0
-    console.log(form);
     updateSettings('data', form); //our axios will recognize the form as an object and it will work just the same
   });
 
@@ -65,6 +64,5 @@ if (bookBtn)
   bookBtn.addEventListener('click', function (event) {
     event.target.textContent = 'Processing...';
     const { tourId } = event.target.dataset;
-    console.log(tourId, event.target.dataset);
     bookTour(tourId);
   });
