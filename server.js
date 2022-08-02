@@ -43,3 +43,10 @@ process.on('unhandledRejection', (err) => {
     //here crash the application is optional, but in uncaught exeption is not optional.
   });
 });
+
+process.on('SIGTERM', () => {
+  console.log('✋ SIGTERM RECEIVED. Shutting dow gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated');
+  });
+});
