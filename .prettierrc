@@ -1,0 +1,10 @@
+{
+  "singleQuote": true,
+  "arrowParens": "always",
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
+}

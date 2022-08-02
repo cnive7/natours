@@ -1,0 +1,104 @@
+const express = require('express');
+const path = require('path');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+// const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
+
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
+const viewRouter = require('./routes/viewRoutes');
+
+const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views')); //node function will create automatically correct path
+
+// GLOBAL MIDDLEWARES
+//Set security HTTP headers
+// app.use(helmet()); //this will return a middleware function what will be sitting here until it's called
+
+//Development logging
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
+//Limit requests from same IP
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour',
+});
+
+app.use('/api', limiter);
+
+//Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' })); //middleware for post data. body larger than 10kb will not be accepted
+
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); //parse form data urlencoded
+
+app.use(cookieParser()); //parse data from cookies
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize()); //will filter out all the dollar signs and double dots
+
+//Data sanitization against XSS
+app.use(xss()); //clean user input from malicious html code
+
+//Prevent parametrer pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
+
+//Serving static files (css, etc)
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Test middleware
+app.use((req, res, next) => {
+  // console.log('Hello from the middleware 😀');
+  // console.log(req.cookies);
+  next();
+});
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
+// ROUTE HANDLERS
+
+// ROUTES
+
+//whenever there's a request with a url that starts like this, then this middleware function will basically be called
+
+app.use('/', viewRouter);
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
+
+//if we add a middleware here, it'll only be reached if not handled by any of our other routers
+// all() for all the verbs, all the http methods
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+});
+
+//global error handling middleware (use next(error) para llegar aqui)
+app.use(globalErrorHandler);
+
+// SERVER
+module.exports = app;
