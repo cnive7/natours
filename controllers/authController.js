@@ -19,7 +19,7 @@ const createAndSendToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    secure: true, //only sent in https
+    // secure: true, //only sent in https
     httpOnly: true, //can not be accessed or modified in any way by the browser
   };
   const responseOptions = {
