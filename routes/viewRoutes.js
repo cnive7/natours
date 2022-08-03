@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get(
   '/',
-  bookingController.createBookingCheckout, //temporally
+  // bookingController.createBookingCheckout, //temporally // Old insecure way, without webhooks
   authController.isLoggedIn,
   viewsController.getOverview
 );

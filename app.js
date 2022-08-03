@@ -12,6 +12,7 @@ const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const bookingController = require('./controllers/bookingController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
@@ -39,6 +40,12 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+
+app.post(
+  'webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+); // Before the conversion to JSON otherwise will not work // Stripe need te body to be in raw format
 
 //Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' })); //middleware for post data. body larger than 10kb will not be accepted
