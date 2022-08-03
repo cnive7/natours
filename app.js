@@ -42,7 +42,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.post(
-  'webhook-checkout',
+  '/webhook-checkout',
   express.raw({ type: 'application/json' }),
   bookingController.webhookCheckout
 ); // Before the conversion to JSON otherwise will not work // Stripe need te body to be in raw format
