@@ -15,8 +15,8 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/?tour=${
     //   req.params.tourId
     // }&user=${req.user.id}&price=${tour.price}`, //browser will be redirected to this url // Old insecure way, without webhooks
-    success_url: `${req.protocol}://${req.get('host')}/`,
-    cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+    success_url: `https://${req.get('host')}/`,
+    cancel_url: `https://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
     line_items: [
