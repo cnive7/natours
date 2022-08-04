@@ -7,6 +7,8 @@ const router = express.Router();
 
 // router.use(authController.isLoggedIn); //this middleware will be executed before all the next middlewares
 
+router.use(viewsController.alerts);
+
 router.get(
   '/',
   // bookingController.createBookingCheckout, //temporally // Old insecure way, without webhooks

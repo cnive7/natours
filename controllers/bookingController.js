@@ -15,7 +15,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/?tour=${
     //   req.params.tourId
     // }&user=${req.user.id}&price=${tour.price}`, //browser will be redirected to this url // Old insecure way, without webhooks
-    success_url: `https://${req.get('host')}/`,
+    success_url: `https://${req.get('host')}/?alert=booking`,
     cancel_url: `https://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
@@ -54,17 +54,17 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
 const createBookingCheckout = async (session) => {
   const tour = session.client_reference_id;
-  console.log('TOUR 😀', tour);
+  // console.log('TOUR 😀', tour);
   const user = (await User.findOne({ email: session.customer_email }))._id;
-  console.log('USER 😀', user);
+  // console.log('USER 😀', user);
   const price = session.amount_total / 100; //amount in cents, we pass to dollars divided by 100
-  console.log('PRICE 😀', price);
+  // console.log('PRICE 😀', price);
   await Booking.create({ tour: tour, user: user, price: price });
 };
 
 exports.webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
-  console.log('SIG 😀', signature);
+  // console.log('SIG 😀', signature);
   let event;
   try {
     event = stripe.webhooks.constructEvent(
@@ -76,7 +76,7 @@ exports.webhookCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
   if (event.type === 'checkout.session.completed') {
-    console.log('EDO 😀', event.data.object);
+    // console.log('EDO 😀', event.data.object);
     createBookingCheckout(event.data.object);
   }
   res.status(200).json({ received: true });
