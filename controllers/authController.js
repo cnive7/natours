@@ -43,8 +43,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
   });
-  const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome(); //await because sendWelcome is an async function
+  // const url = `${req.protocol}://${req.get('host')}/me`;
+  // await new Email(newUser, url).sendWelcome(); //await because sendWelcome is an async function
   createAndSendToken(newUser, 201, res);
 });
 
