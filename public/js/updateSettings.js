@@ -1,8 +1,7 @@
-//update data function
-//call it from index.js
+// Update data function
 import { showAlert } from './alerts.js';
 import axios from 'axios';
-//type is either 'password' or 'data'
+// type is either 'password' or 'data'
 export const updateSettings = async function (type, data) {
   try {
     const apiUrl = '/api/v1/users/';

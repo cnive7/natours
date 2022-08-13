@@ -1,5 +1,5 @@
-//This file is more to get data from the user interface and then delegate the action
-//everything related to user interface
+// This file is more to get data from the user interface and then delegate the action
+// Everything related to user interface
 
 import '@babel/polyfill';
 import { displayMap } from './mapbox';
@@ -8,7 +8,7 @@ import { login, logout, signup } from './login';
 import { bookTour } from './stripe';
 import { showAlert } from './alerts';
 
-//DOM elements
+// DOM elements
 const mapBox = document.querySelector('#map');
 const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
@@ -17,7 +17,7 @@ const updateUserPasswordForm = document.querySelector('.form-user-password');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const bookBtn = document.getElementById('book-tour');
 
-//delegation
+// Delegation
 if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.locations);
   displayMap(locations);

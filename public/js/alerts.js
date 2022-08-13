@@ -1,4 +1,4 @@
-//type is 'success' or 'error'
+// type is 'success' or 'error'
 
 export const hideAlert = () => {
   const el = document.querySelector('.alert');

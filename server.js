@@ -3,10 +3,10 @@ const dotenv = require('dotenv');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION', err);
-  //Shutdown application
-  //by doing server.close, we give the server time to finish all the request that are still pending or being handled
+  // Shutdown application
+  // By doing server.close(), we give the server time to finish all the request that are still pending or being handled.
   server.close(() => {
-    process.exit(1); // 0 = sucess ; 1 = uncaught exeption ///process.exit = abrupt way of closing the server
+    process.exit(1); // 0 = sucess ; 1 = uncaught exeption /// process.exit = abrupt way of closing the server
   });
 });
 
@@ -36,11 +36,10 @@ const server = app.listen(port, () => {
 
 process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION', err.name);
-  //Shutdown application
-  //by doing server.close, we give the server time to finish all the request that are still pending or being handled
+  // Shutdown application
+  // By doing server.close, we give the server time to finish all the request that are still pending or being handled
   server.close(() => {
-    process.exit(1); // 0 = sucess ; 1 = uncaught exeption ///process.exit = abrupt way of closing the server
-    //here crash the application is optional, but in uncaught exeption is not optional.
+    process.exit(1); // 0 = sucess ; 1 = uncaught exeption /// process.exit = abrupt way of closing the server
   });
 });
 

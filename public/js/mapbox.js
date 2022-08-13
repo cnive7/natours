@@ -1,5 +1,5 @@
 export const displayMap = (locations) => {
-  //here goes the mapbox
+  // Here goes the mapbox
   mapboxgl.accessToken =
     'pk.eyJ1Ijoiamp1MWk0biIsImEiOiJjbDY4N2I4eHczc2VoM2lvMXMyODJ6MXU2In0.g20TcwXVDP5CO2atzHXpXQ';
   var map = new mapboxgl.Map({
@@ -14,10 +14,10 @@ export const displayMap = (locations) => {
   const bounds = new mapboxgl.LngLatBounds();
 
   locations.forEach((loc) => {
-    //Create Marker
+    // Create Marker
     const el = document.createElement('div');
     el.className = 'marker';
-    //Add Marker
+    // Add Marker
     new mapboxgl.Marker({
       element: el,
       anchor: 'bottom',
@@ -25,7 +25,7 @@ export const displayMap = (locations) => {
       .setLngLat(loc.coordinates)
       .addTo(map);
 
-    //Add popup
+    // Add popup
     new mapboxgl.Popup({
       offset: 30,
     })
@@ -33,7 +33,7 @@ export const displayMap = (locations) => {
       .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
       .addTo(map);
 
-    //Extend map bound to include current location
+    // Extend map bound to include current location
     bounds.extend(loc.coordinates);
   });
 
