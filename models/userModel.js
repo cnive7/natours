@@ -55,8 +55,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  //if the pasword was actually modified, run the code bellow
-  //bcrypt will salt the password and after will encript it. so 2 passwords have not the same hash
+  // If the pasword was actually modified, run the code below
   this.password = await bcrypt.hash(this.password, 12); // const: larger the number more encryption
 
   this.passwordConfirm = undefined; //we do not want to persist to the db

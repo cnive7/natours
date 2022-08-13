@@ -87,7 +87,7 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {
-  // this.r = await this.findOne(); //does not work here, the query has already executed
+  // this.r = await this.findOne(); // Does not work here, the query has already executed
   // We use this.constructor to use the Model before it's declared (Review)
   await this.r.constructor.calcAverageRating(this.r.tour._id);
 });

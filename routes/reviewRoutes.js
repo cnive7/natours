@@ -1,12 +1,12 @@
 const express = require('express');
 
-const router = express.Router({ mergeParams: true }); //why mergeparams? we get the :id of the tourRoutes
+const router = express.Router({ mergeParams: true }); // Why mergeparams? because we need the :id of the tourRoutes
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
 
 // POST /tour/0000IDexample000/reviews (redirected to here from tourRoutes)
 // POST /reviews
-// come here:
+// Come here:
 
 router.use(authController.protect);
 
