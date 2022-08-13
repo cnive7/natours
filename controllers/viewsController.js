@@ -11,11 +11,9 @@ exports.alerts = (req, res, next) => {
 };
 
 exports.getOverview = catchAsync(async (req, res, next) => {
-  //get all tour data from collection
+  // Get all tour data from collection
   const tours = await Tour.find();
-  //build template
-
-  //render that template using tour data from step 1
+  // Render that template using tour data from step 1
   res.status(200).render('overview', {
     title: 'All Tours',
     tours: tours,
@@ -23,7 +21,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  //get the data, for the requested tour (including reviews and tour guides)
+  // Step 1) Get the data for the requested tour (including reviews and tour guides)
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
     fields: 'review rating user',
@@ -33,8 +31,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   }
   console.log(tour.name, tour.imageCover);
 
-  //build template
-  //render template using data from step 1
+  //Render template using data from Step 1
   res.status(200).render('tour', {
     title: `${tour.name} Tour`,
     tour: tour,
@@ -74,7 +71,7 @@ exports.getAccount = (req, res) => {
 };
 
 exports.updateUserData = catchAsync(async (req, res, next) => {
-  //passwords are threated separately
+  // Passwords are threated separately
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
     {

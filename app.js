@@ -19,20 +19,20 @@ const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
-// Start express app
+// Start express app.
 const app = express();
 
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views')); //node function will create automatically correct path
+app.set('views', path.join(__dirname, 'views')); // Nnode function will create automatically correct path
 
-// GLOBAL MIDDLEWARES
-//Set security HTTP headers
-// app.use(helmet()); //this will return a middleware function what will be sitting here until it's called
+// Global middlewares.
+// Set security HTTP headers
+// app.use(helmet()); // This will return a middleware function what will be sitting here until it's called
 
-//Development logging
+// Development logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-//Limit requests from same IP
+// Limit requests from same IP
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -45,22 +45,22 @@ app.post(
   '/webhook-checkout',
   express.raw({ type: 'application/json' }),
   bookingController.webhookCheckout
-); // Before the conversion to JSON otherwise will not work // Stripe need te body to be in raw format
+); // Before the conversion to JSON otherwise will not work // Stripe need the body to be in raw format
 
-//Body parser, reading data from body into req.body
-app.use(express.json({ limit: '10kb' })); //middleware for post data. body larger than 10kb will not be accepted
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' })); // Middleware for post data. Body larger than 10kb will not be accepted
 
-app.use(express.urlencoded({ extended: true, limit: '10kb' })); //parse form data urlencoded
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); // Parse form data urlencoded
 
-app.use(cookieParser()); //parse data from cookies
+app.use(cookieParser()); // Parse data from cookies
 
-//Data sanitization against NoSQL query injection
+// Data sanitization against NoSQL query injection
 app.use(mongoSanitize()); //will filter out all the dollar signs and double dots
 
-//Data sanitization against XSS
-app.use(xss()); //clean user input from malicious html code
+// Data sanitization against XSS
+app.use(xss()); // Clean user input from malicious html code
 
-//Prevent parametrer pollution
+// Prevent parametrer pollution
 app.use(
   hpp({
     whitelist: [
@@ -81,16 +81,17 @@ app.use(cors()); // Will add a couple of different headers to our response // Ac
 //   })
 // );
 
-app.options('*', cors()); //hyyp method. like app.get(), app.post(), app.patch()
+app.options('*', cors()); // Http method. like app.get(), app.post(), app.patch()
+
 // app.options('/api/v1/tours/:id', cors());
 
-app.use(compression()); //compress all the text that's sent to clients
+app.use(compression()); // Compress all the text that's sent to clients
 
-//Serving static files (css, etc)
+// Serving static files (.css, etc)
 // app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Test middleware
+// Test middleware
 app.use((req, res, next) => {
   // console.log('Hello from the middleware 😀');
   // console.log(req.cookies);
@@ -105,7 +106,7 @@ app.use((req, res, next) => {
 
 // ROUTES
 
-//whenever there's a request with a url that starts like this, then this middleware function will basically be called
+// Whenever there's a request with a url that starts like this, then this middleware function will basically be called
 
 // app.use('/api/v1/tours', cors(), tourRouter);
 app.use('/', viewRouter);
@@ -114,13 +115,13 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
 
-//if we add a middleware here, it'll only be reached if not handled by any of our other routers
-// all() for all the verbs, all the http methods
+// If we add a middleware here, it'll only be reached if not handled by any of our other routers
+// all() for all the verbs, all the Http methods
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
-//global error handling middleware (use next(error) para llegar aqui)
+// Global error handling middleware (use next(error) para llegar aqui)
 app.use(globalErrorHandler);
 
 // SERVER

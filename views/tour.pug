@@ -2,13 +2,12 @@ extends base
 
 include _reviewCard
 
-//- whatever we will write in this block here, will then be appended to the content that's already in that block. And then we can use prepend also, and then it will be added at the beginning of the block
 block append head
   //- script(src='/js/mapbox.js')
   script(src='/js/mapbox-gl.js')
   link(href='/css/mapbox-gl.css' rel='stylesheet')
 
-//- we could export this mixin into another file, then include in this file, but there's not a lot of code
+//- We could export this mixin into another file, then include in this file, but there's not a lot of code to do that.
 mixin overviewBox(label, text, icon)
   .overview-box__detail
     svg.overview-box__icon

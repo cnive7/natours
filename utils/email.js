@@ -5,7 +5,7 @@ const htmlToText = require('html-to-text');
 // new Email(user, url).sendWelcome();
 
 module.exports = class Email {
-  // Contructor is functions that's gonna be running when a new object is created through this class
+  // The contructor is function that's gonna be running when a new object is created through this class
   constructor(user, url) {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];

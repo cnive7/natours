@@ -5,13 +5,13 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
-// router.use(authController.isLoggedIn); //this middleware will be executed before all the next middlewares
+// router.use(authController.isLoggedIn); // This middleware will be executed before all the next middlewares
 
 router.use(viewsController.alerts);
 
 router.get(
   '/',
-  // bookingController.createBookingCheckout, //temporally // Old insecure way, without webhooks
+  // bookingController.createBookingCheckout, // Temporally // Old insecure way, without webhooks
   authController.isLoggedIn,
   viewsController.getOverview
 );
@@ -26,9 +26,5 @@ router.post(
   authController.protect,
   viewsController.updateUserData
 );
-
-// create /login
-// controller
-// template
 
 module.exports = router;

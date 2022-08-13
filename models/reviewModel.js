@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const Tour = require('./tourModel');
 
-//review (text) / rating / createdAt / ref to tour / ref to user
-
 const reviewSchema = mongoose.Schema(
   {
     review: {
@@ -34,7 +32,7 @@ const reviewSchema = mongoose.Schema(
   }
 );
 
-//each combination of tour and user on the Review needs to be unique. (Prevent multiple reviews to same tour from same user)
+// Each combination of tour and user on the Review needs to be unique. (Prevent multiple reviews to same tour from same user)
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.pre(/^find/, function (next) {
@@ -45,9 +43,9 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-//we created this function as a static method, because we need to call the aggregate function on the Model
+// We created this function as a static method, because we need to call the aggregate function on the Model
 reviewSchema.statics.calcAverageRating = async function (tourId) {
-  // in a static method like this, the this keyword points to current model
+  // In a static method like this, the this keyword points to current model
   const stats = await this.aggregate([
     {
       $match: { tour: tourId },
@@ -60,7 +58,6 @@ reviewSchema.statics.calcAverageRating = async function (tourId) {
       },
     },
   ]);
-  // console.log(stats);
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
       ratingsQuantity: stats[0].numberOfRatings,
@@ -74,24 +71,24 @@ reviewSchema.statics.calcAverageRating = async function (tourId) {
   }
 };
 
-//every time a review is created or updated, calcAverageRating will be executed
+// Every time a review is created or updated, calcAverageRating will be executed
 reviewSchema.post('save', function () {
-  //this points to current review
-  //we use this.constructor to use the Model before it's declared (Review)
+  // This points to current review
+  // We use this.constructor to use the Model before it's declared (Review)
   this.constructor.calcAverageRating(this.tour);
 });
 
-//findByIdAndUpdate
-//findByIdAndDelete
+// findByIdAndUpdate
+// findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function (next) {
-  //we save it to this.r, so we can use in the .post() middleware
+  // We save it to this.r, so we can use it in the .post() middleware
   this.r = await this.findOne();
   next();
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {
   // this.r = await this.findOne(); //does not work here, the query has already executed
-  //we use this.constructor to use the Model before it's declared (Review)
+  // We use this.constructor to use the Model before it's declared (Review)
   await this.r.constructor.calcAverageRating(this.r.tour._id);
 });
 

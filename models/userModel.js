@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-//name, email, photo, password, passwordConfirm
+// name, email, photo, password, passwordConfirm
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A email is required'],
     unique: true,
-    lowercase: true, //will transform the email to lowercase
+    lowercase: true, // Will transform the email to lowercase
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
   photo: { type: String, default: 'default.jpg' },
@@ -26,14 +26,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 8, //check if password is lower thatn 8 characters
+    minlength: 8, // Check if password is lower than 8 characters
     select: false,
   },
   passwordConfirm: {
     type: String,
     required: [true, 'Please confirm your password'],
     validate: {
-      //this only works when we create a new object, or on save
+      // This only works when we create a new object, or on save
       validator: function (el) {
         return el === this.password;
       },
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-//  if you want to import user data turn off pass encryption. (the next 2 pre save hook)
+// If you want to import user data turn off pass encryption because the pass is already encrypted. (the next two pre save hook)
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
@@ -65,23 +65,23 @@ userSchema.pre('save', async function (next) {
 
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
-  this.passwordChangedAt = Date.now() - 2000; //we substact 2000 because sometimes DB operations are a bit slow and later we check if password was changed after the JWT token was generated to invalidate token.
+  this.passwordChangedAt = Date.now() - 2000; // We substact 2000 because sometimes DB operations are a bit slow.
   next();
 });
 
 userSchema.pre(/^find/, function (next) {
-  //this keyword  points to the current query
+  // The this keyword points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-//We will create an instance method, and a instance method is a method that will be available in all the documents of a certain collection
+// We will create an instance method, and a instance method is a method that will be available in all the documents of a certain collection
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
-  //this.password will not be available because we set select: false, on the Schema //that's why we actually have to pass in the userPassword as well.
-  return await bcrypt.compare(candidatePassword, userPassword); //will return true or false
+  // this.password will not be available because we set select: false, on the Schema // That's why we actually have to pass in the userPassword as well.
+  return await bcrypt.compare(candidatePassword, userPassword); // Will return true or false
 };
 
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
@@ -93,12 +93,12 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     console.log(chagedTimestamp, JWTTimestamp);
     return JWTTimestamp < chagedTimestamp;
   }
-  //false means not changed
+  // False means not changed
   return false;
 };
 
 userSchema.methods.createPasswordResetToken = function () {
-  //we should never store a plain reset token into the db.
+  // We should never store a plain reset token into the db.
   const resetToken = crypto.randomBytes(32).toString('hex');
 
   this.passwordResetToken = crypto
@@ -111,7 +111,7 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-//convention that model variables are usually always with a capital  first letter
+// Convention that model variables are usually always with a capital first letter
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

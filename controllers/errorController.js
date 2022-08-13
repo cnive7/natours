@@ -18,7 +18,7 @@ const handleValidationErrorDB = (err) => {
 };
 
 const handleJWTError = () => {
-  return new AppError('Invalid token. Please log in again!', 401); //401 : unauthorized
+  return new AppError('Invalid token. Please log in again!', 401); // 401 : unauthorized
 };
 
 const handleJWTExpiredError = () => {
@@ -26,7 +26,7 @@ const handleJWTExpiredError = () => {
 };
 
 const sendErrorDev = (err, req, res) => {
-  //FOR API
+  // FOR API
   if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -35,7 +35,7 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   } else {
-    //FOR RENDERED WEBSITE
+    // FOR RENDERED WEBSITE
     res.status(err.statusCode).render('error', {
       title: 'Something went wrong.',
       message: err.message,
@@ -44,7 +44,7 @@ const sendErrorDev = (err, req, res) => {
 };
 
 const sendErrorProd = (err, req, res) => {
-  //FOR API
+  // FOR API
   if (req.originalUrl.startsWith('/api')) {
     //operational, trusted error: send message to client
     if (err.isOperational) {
@@ -52,7 +52,7 @@ const sendErrorProd = (err, req, res) => {
         status: err.status,
         message: err.message,
       });
-      //programming or other unkow error: don't leak error details
+      // Programming or other unkow error: don't leak error details
     } else {
       console.error('ERROR 💥', err);
       res.status(500).json({
@@ -61,13 +61,13 @@ const sendErrorProd = (err, req, res) => {
       });
     }
   } else {
-    //FOR RENDERED WEBSITE
+    // FOR RENDERED WEBSITE
     if (err.isOperational) {
       res.status(err.statusCode).render('error', {
         title: 'Something went wrong.',
         message: err.message,
       });
-      //programming or other unkow error: don't leak error details
+      // Programming or other unkow error: don't leak error details
     } else {
       console.error('ERROR 💥', err);
       res.status(err.statusCode).render('error', {

@@ -4,9 +4,9 @@ const router = express.Router({ mergeParams: true }); //why mergeparams? we get 
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
 
-// POST /tour/234fad4/reviews (redirected to here from tourRoutes)
+// POST /tour/0000IDexample000/reviews (redirected to here from tourRoutes)
 // POST /reviews
-// llegan aquí :
+// come here:
 
 router.use(authController.protect);
 

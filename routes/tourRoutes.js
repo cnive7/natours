@@ -8,7 +8,7 @@ const { route } = require('../routes/reviewRoutes');
 
 // router.param('id', tourController.checkID);
 
-//replaced with the below middleware
+// Replaced with the below middleware
 // router
 //   .route('/:tourId/reviews')
 //   .post(
@@ -16,8 +16,8 @@ const { route } = require('../routes/reviewRoutes');
 //     authController.restrictTo('user'),
 //     reviewController.createReview
 //   );
-//a router itself it's really just middleware. so we can use the use() method on it and then say that for this specific route here, we want to use the review router instead
-//mounting the router. exact same thing made in the app.js
+// A router itself it's really just middleware. So we can use the use() method on it and then say that for this specific route here, we want to use the review router instead.
+// It's mounting the router. Exact same thing made in the app.js
 router.use('/:tourId/reviews', reviewRouter);
 
 router
@@ -34,14 +34,14 @@ router
     tourController.getMonthlyPlan
   );
 
-//this way of specifing
 router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
   .get(tourController.getToursWithin);
-//tours-distance?distance=233&center=-40,45 //before way
-//tours-distance/233/center/-40,45/unit/mi //new way, better
 
-//calculate the distance from a certain point, to all the tours that we have in the collection
+//tours-distance?distance=233&center=-40,45 // Old way
+//tours-distance/233/center/-40,45/unit/mi // New way, better
+
+// Calculate the distance from a certain point, to all the tours that we have in the collection.
 router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 
 router
@@ -65,7 +65,7 @@ router
   )
   .delete(
     authController.protect,
-    authController.restrictTo('admin', 'lead-guide'), //this will be executed and returned another function
+    authController.restrictTo('admin', 'lead-guide'), // This will be executed and will return another function
     tourController.deleteTour
   );
 

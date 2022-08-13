@@ -18,7 +18,7 @@ const sharp = require('sharp');
 //   },
 // });
 
-const multerStorage = multer.memoryStorage(); //te upload now is happening to a buffer and not directly to the file system
+const multerStorage = multer.memoryStorage(); // The upload now is happening to a buffer and not directly to the file system
 
 const multerFilter = (req, file, callback) => {
   if (file.mimetype.startsWith('image')) {
@@ -45,18 +45,18 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadUserPhoto = upload.single('photo');
 
-//faking the id coming from the params. To use getOne factory handler
+// Faking the id coming from the params. To use getOne from handlerFactory.js
 exports.getMe = (req, res, next) => {
   req.params.id = req.user._id;
   next();
 };
 
-//this middleware function will run right after the photo is actually uploaded
+// This middleware function will run right after the photo is actually uploaded
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
-  //with memory storage we do not get filename, so we need to set it
+  // With memory storage we do not get filename, so we need to set it
   req.file.filename = `user-${req.user._id}-${Date.now()}.jpeg`; //So we can use it in the updateMe() route handler
-  //req.file.buffer from this: const multerStorage = multer.memoryStorage();
+  // req.file.buffer from this: const multerStorage = multer.memoryStorage();
   await sharp(req.file.buffer)
     .resize(500, 500, {})
     .toFormat('jpeg')
@@ -67,14 +67,14 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  //create error if user posts password data
+  // Create error if user posts password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates', 400));
   }
-  //filtered fields that are not allowed to be updated
+  // Filtered fields that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
   if (req.file) filteredBody.photo = req.file.filename;
-  //update user document
+  // Update user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
@@ -104,6 +104,6 @@ exports.createUser = (req, res) => {
 
 exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
-//Do NOT update passwords with this updateOne!
+// Do NOT update passwords with this updateOne!
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

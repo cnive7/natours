@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
 // const User = require('./userModel');
-//we are doing the data validation in the right here in the model
-//and that's because of the fat model and thin controller philosophy
+// We are doing the data validation in the right here in the model
+// And that's because of the fat model and thin controller philosophy
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -30,7 +30,7 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A tour must have a difficulty'],
       enum: {
-        //only for strings
+        // Only for strings
         values: ['easy', 'medium', 'difficult', 'hard'],
         message: 'Difficulty is either easy, medium, difficult or hard',
       },
@@ -38,9 +38,9 @@ const tourSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      min: [1, 'Rating must be above 1.0'], //only for numbers / dates
+      min: [1, 'Rating must be above 1.0'], // Only for numbers / dates
       max: [5, 'Rating must be below 5.0'],
-      set: (val) => Math.round(val * 10) / 10, //4.666, 46.6666, 47, 4.7, //setter function, this function will be run each time that a new value is set for this field
+      set: (val) => Math.round(val * 10) / 10, // 4.666, 46.6666, 47, 4.7, // setter function, this function will be run each time that a new value is set for this field
     },
     ratingsQuantity: {
       type: Number,
@@ -54,9 +54,9 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       validate: {
         validator: function (inputVal) {
-          //this keywords only points to current doc on NEW document creation. NOT update
+          // This keywords only points to current doc on NEW document creation. NOT update
           return inputVal < this.price;
-          //will return true or false. boolean used for validation
+          // Will return true or false. Boolean used for validation
         },
         message: 'Discount price ({VALUE}) should be below regular price',
       },
@@ -84,10 +84,10 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false,
-      select: false, //hide on response
+      select: false, // Hide on response
     },
     startLocation: {
-      //GeoJSON //sub schema
+      // GeoJSON //sub schema
       type: {
         type: String,
         default: 'Point',
@@ -114,11 +114,11 @@ const tourSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-      }, //what this means, is what we expect a type of each of the elements in the guides array to be a MongoDB ID
+      }, // What this means, is what we expect a type of each of the elements in the guides array to be a MongoDB ID
     ],
   },
   {
-    toJSON: { virtuals: true }, //each time it's converted toJSON or OBJ we want the virtual vars
+    toJSON: { virtuals: true }, // Each time it's converted toJSON or OBJ we want the virtual vars
     toObject: { virtuals: true },
   }
 );
@@ -131,14 +131,14 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
-//virtual populate
+// Virtual populate
 tourSchema.virtual('reviews', {
   ref: 'Review',
-  foreignField: 'tour', //where the id of the tour is stored in the other model
-  localField: '_id', //where the id of the tour is stored in the local model
+  foreignField: 'tour', // Where the id of the tour is stored in the other model
+  localField: '_id', // Where the id of the tour is stored in the local model
 });
 
-//document middleware: runs before .save() and .create(). NOT on .insertMany()
+// Document middleware: Runs before .save() and .create(). NOT on .insertMany()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
@@ -161,33 +161,33 @@ tourSchema.post('save', function (doc, next) {
   next();
 });
 
-//query middleware //this is for before the query is executed
+// Query middleware: This is for before the query is executed
 tourSchema.pre(/^find/, function (next) {
-  ///^find/ regular expression for all containing word 'find' e.g. findOne
-  //the this keyword will now point at the current query and not at the current document
-  //so, as the this keyword points to the query, we can chain another query method
+  // /^find/ regular expression for all containing word 'find' e.g. findOne
+  // The this keyword will now point at the current query and not at the current document
+  // So, as the this keyword points to the query, we can chain another query method
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
 
-//populate query middleware
+// Populate query middleware
 tourSchema.pre(/^find/, function (next) {
-  //this keyword will point to current query
+  // The this keyword will point to current query
   this.populate({
     path: 'guides',
-    select: '-__v -passwordChangedAt', //exclude this fields
+    select: '-__v -passwordChangedAt', // Exclude this fields
   });
   next();
 });
 
-//here we can have access to the list of documents, because the query has finished at this point
+// Here we can have access to the list of documents, because the query has finished at this point
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} millisecond`);
   next();
 });
 
-//aggregation middleware
+// Aggregation middleware
 //this keyword it's gonna point to the current aggregation object
 // tourSchema.pre('aggregate', function (next) {
 //   this.pipeline().unshift({
